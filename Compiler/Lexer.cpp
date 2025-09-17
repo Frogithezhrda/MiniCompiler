@@ -1,38 +1,89 @@
 #include "Lexer.h"
 
-Token Lexer::nextToken()
+Lexer::Lexer(const std::shared_ptr<FileHandler> handler)
 {
-	return Token();
+	m_fileHandler = handler;
+	if (!readMagic())
+	{
+		throw MagicException("Not A Skippy File!");
+	}
+	while (nextToken().type != TokenType::EOF_TOKEN);
 }
 
-bool Lexer::isDigit(char c)
-{
-	return false;
-}
-
-bool Lexer::isAlpha(char c)
-{
-	return false;
-}
-
-bool Lexer::isAlnum(char c)
-{
-	return false;
-}
-
-void Lexer::skipWhitespace()
-{
-}
-
-Token Lexer::readNumber()
+Token Lexer::nextToken() const
 {
 	Token token;
-	token.type = TokenType::NUMBER;
-	token.value
-	return Token();
+	
+	try
+	{
+		skipBlank();
+		token.value = std::string().empty();
+
+		char currentChar = m_fileHandler->peekChar();
+		if (std::isdigit(currentChar))  
+		{
+			return readNumber();
+		}
+		else if (std::isalpha(currentChar))  
+		{
+			return readIdentifier();
+		}
+		else if(m_fileHandler->endLine())
+		{
+			m_fileHandler->nextLine();
+			token.type = TokenType::SEMICOLON;
+			return token;
+		}
+	}
+	catch (const EOFException&)
+	{
+		token.type = TokenType::EOF_TOKEN;
+		return token;
+	}
+	throw IndentationException("Cannot Read That Type of Character!");
 }
 
-Token Lexer::readIdentifier()
+void Lexer::skipBlank() const
 {
-	return Token();
+	while (std::isspace(m_fileHandler->peekChar()) || m_fileHandler->peekChar() == '\0')
+	{
+		m_fileHandler->nextLine();  
+	}
+}
+
+
+Token Lexer::readNumber() const
+{
+	std::string value;
+	Token token;
+	while (std::isdigit(m_fileHandler->peekChar()) || !m_fileHandler->endLine())  
+	{
+		value += m_fileHandler->nextChar();
+	}
+	token.type = TokenType::NUMBER;
+	token.value = value;
+	return token;
+}
+
+Token Lexer::readIdentifier() const
+{
+	std::string value;
+	Token token;
+	while (std::isalnum(m_fileHandler->peekChar()) || m_fileHandler->peekChar() == '_')
+	{
+		value += m_fileHandler->nextChar();
+	}
+	token.type = TokenType::IDENTIFIER;
+	token.value = value;
+	return token;
+}
+
+bool Lexer::readMagic() const
+{
+	if(m_fileHandler->peekLine() == START_SIGNATURE)
+	{
+		m_fileHandler->nextLine();
+		return true;
+	}
+	return false;
 }

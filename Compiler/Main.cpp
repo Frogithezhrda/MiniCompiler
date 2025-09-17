@@ -4,9 +4,20 @@ constexpr const int ARG_COUNT = 3;
 
 int main(int argc, char** argv)
 {
-	if (ARG_COUNT == argc)
+	if (ARG_COUNT != argc)
 	{
 		std::cout << "Need Output And Input File";
 	}
-	FileHandler file;
+	else
+	{
+		try
+		{
+			Lexer lexer(std::make_shared<FileHandler>(argv[1], argv[2]));
+			std::cout << "Compiled!";
+		}
+		catch (const std::exception& exception)
+		{
+			std::cout << exception.what();
+		}
+	}
 }

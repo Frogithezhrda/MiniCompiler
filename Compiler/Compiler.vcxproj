@@ -123,13 +123,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FileHandler.cpp" />
     <ClCompile Include="FileHandler.h" />
     <ClCompile Include="Lexer.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Parser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EOFException.hpp" />
+    <ClInclude Include="FileException.hpp" />
+    <ClInclude Include="IndentationException.hpp" />
     <ClInclude Include="Lexer.h" />
+    <ClInclude Include="MagicException.hpp" />
     <ClInclude Include="Parser.h" />
   </ItemGroup>
   <ItemGroup>
