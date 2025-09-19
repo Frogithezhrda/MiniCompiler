@@ -136,6 +136,7 @@
     <ClInclude Include="Lexer.h" />
     <ClInclude Include="MagicException.hpp" />
     <ClInclude Include="Parser.h" />
+    <ClInclude Include="Token.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="test.skip" />

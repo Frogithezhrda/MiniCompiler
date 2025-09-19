@@ -4,17 +4,14 @@
 #include <iostream>
 #include "MagicException.hpp"
 #include "IndentationException.hpp"
+#include <map>
+#include "Token.h"
+#include "Parser.h"
 
-enum class TokenType { NUMBER, IDENTIFIER, PLUS, MINUS, MULTIPLY, DIVIDE, ASSIGN, SEMICOLON, LPAREN, RPAREN, IF, ELSE, WHILE, EOF_TOKEN, INVALID };
+class Parser;
 
-struct Token 
-{ 
-	TokenType type; 
-	std::string value; 
-};
 
 constexpr const char* START_SIGNATURE = "#SKIPPY";
-constexpr const char* END_SIGNATURE = "#SKIP";
 
 class Lexer 
 { 
@@ -28,4 +25,5 @@ public:
 	bool readMagic() const;
 private:
 	std::shared_ptr<FileHandler> m_fileHandler;
+	bool isOperator(const char character) const;
 };
