@@ -15,6 +15,7 @@ void Parser::parseLine(TokenLine& tokenLine)
 {
     std::vector<int*> values;
     std::vector<std::pair<TokenType, std::pair<int, int>>> operationPairs;
+
     while (!tokenLine.tokens.empty())
     {   
         Token token = tokenLine.tokens.front();
@@ -27,12 +28,35 @@ void Parser::parseLine(TokenLine& tokenLine)
         }
         else if (token.type == TokenType::PLUS || token.type == TokenType::MINUS || token.type == TokenType::MULTIPLY || token.type == TokenType::DIVIDE)
         {
+            if (values.empty())
+            {
+                throw IndentationException("Expression cannot start with an operator");
+            }
+            if (tokenLine.tokens.empty() || tokenLine.tokens.front().type != TokenType::NUMBER)
+            {
+                throw IndentationException("Operator must be followed by a number");
+            }
             std::cout << " " << token.value << " ";
             values.push_back(new int(std::stoi(tokenLine.tokens.front().value)));
             std::cout << tokenLine.tokens.front().value;
             int currentSize = values.size();
             operationPairs.push_back({ token.type , {currentSize - 2, currentSize - 1} });
             tokenLine.tokens.pop();
+        }
+        else if (token.type == TokenType::TYPE)
+        {
+            if (token.value == "skipNumber")
+            {
+
+            }
+            else if (token.value == "skipHalf")
+            {
+
+            }
+            else if (token.value == "skipWord")
+            {
+
+            }
         }
     }
     std::sort(operationPairs.begin(), operationPairs.end(),

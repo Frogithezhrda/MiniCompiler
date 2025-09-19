@@ -48,6 +48,7 @@ Token Lexer::nextToken() const
 		}
 		else if (isOperator(currentChar))
 		{
+
 			m_fileHandler->nextChar();
 			skipBlank();
 
@@ -106,6 +107,10 @@ Token Lexer::readIdentifier() const
 		value += m_fileHandler->nextChar();
 	}
 	token.type = TokenType::IDENTIFIER;
+	if (value == "skipNumber" || value == "skipHalf" || value == "skipWord")
+	{
+		token.type = TokenType::TYPE;
+	}
 	token.value = value;
 	return token;
 }
