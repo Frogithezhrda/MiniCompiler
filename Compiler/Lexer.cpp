@@ -63,6 +63,14 @@ Token Lexer::nextToken() const
 
 			return token;
 		}
+		else if (currentChar == '=')
+		{
+			m_fileHandler->nextChar();
+			skipBlank();
+			token.type = TokenType::ASSIGN;
+			token.value = currentChar;
+			return token;
+		}
 	}
 	catch (const EOFException&)
 	{

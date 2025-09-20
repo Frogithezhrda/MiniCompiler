@@ -5,6 +5,24 @@
 #include <map>
 #include "IndentationException.hpp"
 #include <unordered_set>
+#include <variant>
+
+
+enum class VarType 
+{
+	Number,
+	Half,
+	Word
+};
+
+using Value = std::variant<int, float, std::string>;
+
+struct Variable
+{
+	VarType type;
+	std::string name;
+	Value value;
+};
 
 class Parser
 {
@@ -14,10 +32,9 @@ public:
 private:
 	Parser();
 	double applyOperator(const int a, const int b, const TokenType op);
-	void parseOperators(const Token& currentToken, std::vector<double>& values, TokenLine& tokenLine);
 	Parser(const Parser&) = delete;
 	Parser& operator=(const Parser&) = delete;
 
-
+	std::unordered_map<std::string, Variable> m_variables;
 	static Parser* instance;
 };

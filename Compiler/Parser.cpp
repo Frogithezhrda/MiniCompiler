@@ -45,17 +45,41 @@ void Parser::parseLine(TokenLine& tokenLine)
         }
         else if (token.type == TokenType::TYPE)
         {
-            if (token.value == "skipNumber")
+            if (tokenLine.tokens.empty() || tokenLine.tokens.front().type != TokenType::IDENTIFIER) 
             {
-
+                throw IndentationException("Must have a variable name after type declaration");
             }
-            else if (token.value == "skipHalf")
-            {
 
+            Token nameToken = tokenLine.tokens.front();
+            tokenLine.tokens.pop();
+
+            Variable var;
+            var.name = nameToken.value;
+            var.type = VarType::Number;
+            if (tokenLine.tokens.empty() || tokenLine.tokens.front().type != TokenType::ASSIGN) 
+            {
+                throw IndentationException("Variable declaration must include assignment");
             }
-            else if (token.value == "skipWord")
-            {
 
+            tokenLine.tokens.pop();
+            if (tokenLine.tokens.empty() || tokenLine.tokens.front().type != TokenType::NUMBER) 
+            {
+                throw IndentationException("Variable assignment must have a number");
+            }
+
+            Token numberToken = tokenLine.tokens.front();
+            tokenLine.tokens.pop();
+            var.value = std::stoi(numberToken.value);
+            values.push_back(new int(std::stoi(numberToken.value)));
+            m_variables[nameToken.value] = var;
+            std::cout << var.name << " = " << std::get<int>(var.value) << ";" << std::endl;
+            return;
+        }
+        else if (token.type == TokenType::IDENTIFIER)
+        {
+            if (m_variables.find(token.value) != m_variables.end())
+            {
+                std::cout << std::get<int>(m_variables[token.value].value) << ";" << std::endl;
             }
         }
     }
@@ -90,12 +114,13 @@ void Parser::parseLine(TokenLine& tokenLine)
         }
     }
     operationPairs.clear();
-    std::cout << " = " << *values.front() << ";" << std::endl;
-
-
-    //we must use an unoredered set because we cant delete the same value
-    delete values.front();
-    values.clear();
+    if (!values.empty())
+    {
+        std::cout << " = " << *values.front() << ";" << std::endl;
+        //we must use an unoredered set because we cant delete the same value
+        delete values.front();
+        values.clear();
+    }
 }
 
 Parser* Parser::getInstance()
@@ -113,8 +138,4 @@ Parser::Parser() {}
 double Parser::applyOperator(const int a, const int b, const TokenType op)
 {
     return opMap[op](a, b);
-}
-
-void Parser::parseOperators(const Token& currentToken, std::vector<double>& values, TokenLine& tokenLine)
-{
 }
